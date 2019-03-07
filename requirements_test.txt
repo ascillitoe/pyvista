@@ -1,7 +1,7 @@
 pytest
 pytest-cov
 codecov
-PyQt5==5.11.3
+PyQt5
 pytest-qt
 nbval
 ipywidgets
