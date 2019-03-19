@@ -11,7 +11,7 @@ from vtk.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 import vtki
 from vtki import DataSetFilters
 from vtki.utilities import (CELL_DATA_FIELD, POINT_DATA_FIELD, get_scalar,
-                            vtk_bit_array_to_char)
+                            vtk_bit_array_to_char, is_vtki_obj)
 
 log = logging.getLogger(__name__)
 log.setLevel('CRITICAL')
@@ -735,7 +735,8 @@ class Common(DataSetFilters, object):
         attrs.append(("X Bounds", (bds[0], bds[1]), "{:.3e}, {:.3e}"))
         attrs.append(("Y Bounds", (bds[2], bds[3]), "{:.3e}, {:.3e}"))
         attrs.append(("Z Bounds", (bds[4], bds[5]), "{:.3e}, {:.3e}"))
-        attrs.append(("Volume", (self.volume), "{:.3e}"))
+        if self.n_cells <= vtki.REPR_VOLUME_MAX_CELLS:
+            attrs.append(("Volume", (self.volume), "{:.3e}"))
         return attrs
 
 
@@ -828,6 +829,20 @@ class Common(DataSetFilters, object):
     def __repr__(self):
         """Object representation"""
         return self.head(display=False)
+
+    def overwrite(self, mesh):
+        """
+        Overwrites this mesh inplace with the new mesh's geometries and data
+
+        Parameters
+        ----------
+        mesh : vtk.vtkDataSet
+            The overwriting mesh.
+
+        """
+        self.DeepCopy(mesh)
+        if is_vtki_obj(mesh):
+            self.copy_meta_from(mesh)
 
 
 class _ScalarsDict(dict):
