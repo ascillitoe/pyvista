@@ -1329,7 +1329,7 @@ class DataSetFilters(object):
 
 
     def sample(dataset, target, tolerance=None, pass_cell_arrays=True,
-               pass_point_arrays=True):
+               pass_point_arrays=True,mark_blank=True):
         """Resample array data from a passed mesh onto this mesh.
 
         This uses :class:`vtk.vtkResampleWithDataSet`.
@@ -1353,12 +1353,15 @@ class DataSetFilters(object):
         pass_point_arrays: bool, optional
             Preserve source mesh's original point data arrays
 
+        mark_blank: bool, optional
+            Mark blank points and cells
         """
         alg = vtk.vtkResampleWithDataSet() # Construct the ResampleWithDataSet object
         alg.SetInputData(dataset)  # Set the Input data (actually the source i.e. where to sample from)
         alg.SetSourceData(target) # Set the Source data (actually the target, i.e. where to sample to)
         alg.SetPassCellArrays(pass_cell_arrays)
         alg.SetPassPointArrays(pass_point_arrays)
+        alg.SetMarkBlankPointsAndCells(mark_blank)
         if tolerance is not None:
             alg.SetComputeTolerance(False)
             alg.SetTolerance(tolerance)
